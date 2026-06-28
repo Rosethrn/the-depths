@@ -28,7 +28,7 @@ function showQuestion(){
 
     else{
 
-        question.textContent = "Your wish has been heard.";
+        question.textContent = "Very... Very... Interesting...";
 
         input.style.display = "none";
 
