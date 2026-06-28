@@ -34,22 +34,19 @@ function showQuestion() {
 async function submitAnswers() {
 
     input.style.display = "none";
-
     question.textContent = "...";
 
     try {
 
-        const response = await fetch(WEB_APP_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(answers)
-        });
+        const form = new URLSearchParams();
+        form.append("name", answers.name);
+        form.append("power", answers.power);
 
-        if (!response.ok) {
-            throw new Error("Failed to submit.");
-        }
+        await fetch(WEB_APP_URL, {
+            method: "POST",
+            body: form,
+            mode: "no-cors"
+        });
 
         question.textContent = "Very... Very... Interesting....";
 
