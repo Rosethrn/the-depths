@@ -78,7 +78,7 @@ input.addEventListener("keydown",async function(e){
 
         await wait(1200);
 
-        text.textContent="Your wish has been heard.";
+        text.textContent="Very Very Interesting...";
 
         text.classList.add("show");
 
