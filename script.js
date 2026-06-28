@@ -1,93 +1,67 @@
-const text = document.getElementById("text");
+const question = document.getElementById("question");
 const input = document.getElementById("answer");
+
+const answers = {
+    name: "",
+    power: ""
+};
 
 let stage = 0;
 
-let playerName = "";
-let desiredPower = "";
+showQuestion();
 
-const questions = [
+function showQuestion(){
 
-    "What is your name?",
+    if(stage === 0){
 
-    "What power do you desire?"
-
-];
-
-function wait(ms){
-
-    return new Promise(resolve=>setTimeout(resolve,ms));
-
-}
-
-async function ask(question){
-
-    input.value="";
-
-    text.classList.remove("show");
-    input.classList.remove("show");
-
-    await wait(700);
-
-    text.textContent=question;
-
-    text.classList.add("show");
-
-    await wait(1200);
-
-    input.classList.add("show");
-
-    input.focus();
-
-}
-
-ask(questions[0]);
-
-input.addEventListener("keydown",async function(e){
-
-    if(e.key!=="Enter") return;
-
-    if(stage===0){
-
-        playerName=input.value.trim();
-
-        stage++;
-
-        await ask(questions[1]);
-
-        return;
+        question.textContent = "What is your name?";
 
     }
 
-    if(stage===1){
+    else if(stage === 1){
 
-        desiredPower=input.value.trim();
+        question.textContent = "What power do you desire?";
 
-        input.classList.remove("show");
-        text.classList.remove("show");
+        input.value = "";
 
-        await wait(1000);
-
-        text.textContent="...";
-
-        text.classList.add("show");
-
-        await wait(2200);
-
-        text.classList.remove("show");
-
-        await wait(1200);
-
-        text.textContent="Very Very Interesting...";
-
-        text.classList.add("show");
-
-        console.log({
-            name:playerName,
-            power:desiredPower
-        });
-
-        // We'll send it to Google Sheets here later.
     }
+
+    else{
+
+        question.textContent = "Your wish has been heard.";
+
+        input.style.display = "none";
+
+        console.log("Submission:");
+
+        console.log(answers);
+
+    }
+
+}
+
+input.addEventListener("keydown", function(event){
+
+    if(event.key !== "Enter") return;
+
+    const value = input.value.trim();
+
+    if(value.length === 0) return;
+
+    if(stage === 0){
+
+        answers.name = value;
+
+    }
+
+    else if(stage === 1){
+
+        answers.power = value;
+
+    }
+
+    stage++;
+
+    showQuestion();
 
 });
