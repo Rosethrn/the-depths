@@ -8,53 +8,73 @@ const answers = {
 
 let stage = 0;
 
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyb4jdYj4erfDV_s45nOongeu6XndwK-lUqZisHp93_xHxJfHJejzegMmxIyn2nJUy3/exec";
+
 showQuestion();
 
-function showQuestion(){
+function showQuestion() {
 
-    if(stage === 0){
+    if (stage === 0) {
 
         question.textContent = "What is your name?";
 
-    }
-
-    else if(stage === 1){
+    } else if (stage === 1) {
 
         question.textContent = "What power do you desire?";
-
         input.value = "";
 
-    }
+    } else {
 
-    else{
-
-        question.textContent = "Very... Very... Interesting...";
-
-        input.style.display = "none";
-
-        console.log("Submission:");
-
-        console.log(answers);
+        submitAnswers();
 
     }
 
 }
 
-input.addEventListener("keydown", function(event){
+async function submitAnswers() {
 
-    if(event.key !== "Enter") return;
+    input.style.display = "none";
 
-    const value = input.value.trim();
+    question.textContent = "...";
 
-    if(value.length === 0) return;
+    try {
 
-    if(stage === 0){
+        const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(answers)
+        });
 
-        answers.name = value;
+        if (!response.ok) {
+            throw new Error("Failed to submit.");
+        }
+
+        question.textContent = "Very... Very... Interesting....";
+
+    } catch (error) {
+
+        console.error(error);
+        question.textContent = "Something went wrong.";
 
     }
 
-    else if(stage === 1){
+}
+
+input.addEventListener("keydown", function (event) {
+
+    if (event.key !== "Enter") return;
+
+    const value = input.value.trim();
+
+    if (value.length === 0) return;
+
+    if (stage === 0) {
+
+        answers.name = value;
+
+    } else if (stage === 1) {
 
         answers.power = value;
 
