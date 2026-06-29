@@ -7,18 +7,21 @@
 
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div id="container">
 
-    <h1 id="question"></h1>
+    <div id="text"></div>
 
-    <input
-        id="answer"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-    >
+    <div id="inputLine">
+        <span id="prefix">&gt;</span>
+        <span id="typed"></span>
+        <span id="cursor">█</span>
+    </div>
+
+    <!-- hidden real input -->
+    <input id="hiddenInput" type="text" autocomplete="off" spellcheck="false">
 
 </div>
 
