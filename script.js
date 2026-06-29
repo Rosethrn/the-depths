@@ -1,90 +1,100 @@
-const question = document.getElementById("question");
-const input = document.getElementById("answer");
+const text = document.getElementById("text");
+const typed = document.getElementById("typed");
+const hiddenInput = document.getElementById("hiddenInput");
+
+const API_URL = "/api/submit";
+
+let stage = 0;
 
 const answers = {
     name: "",
     power: ""
 };
 
-let stage = 0;
+// Start immediately
+init();
 
-// Sends to your Vercel API
-const API_URL = "/api/submit";
+function init() {
+    showQuestion();
+    hiddenInput.focus();
+}
 
-showQuestion();
+// Keep focus locked so user always types
+document.addEventListener("click", () => hiddenInput.focus());
+
+hiddenInput.addEventListener("input", (e) => {
+    typed.textContent = e.target.value;
+});
+
+hiddenInput.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+
+    const value = hiddenInput.value.trim();
+    if (!value) return;
+
+    handleInput(value);
+    hiddenInput.value = "";
+    typed.textContent = "";
+});
 
 function showQuestion() {
 
     if (stage === 0) {
-
-        question.textContent = "What is your name?";
-
-    } else if (stage === 1) {
-
-        question.textContent = "What Power Do You Desire?";
-        input.value = "";
-
-    } else {
-
-        submitAnswers();
-
+        setText("What is your name?");
     }
 
+    else if (stage === 1) {
+        setText("What Power Do You Desire?");
+    }
+
+    else {
+        submit();
+    }
 }
 
-async function submitAnswers() {
+function setText(newText) {
+    text.classList.add("fade-out");
 
-    input.style.display = "none";
-    question.textContent = "...";
+    setTimeout(() => {
+        text.textContent = newText;
+        text.classList.remove("fade-out");
+    }, 500);
+}
+
+function handleInput(value) {
+
+    if (stage === 0) {
+        answers.name = value;
+    }
+
+    else if (stage === 1) {
+        answers.power = value;
+    }
+
+    stage++;
+    showQuestion();
+}
+
+async function submit() {
+
+    setText("...");
 
     try {
-
-        const response = await fetch(API_URL, {
+        await fetch(API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                name: answers.name,
-                power: answers.power
-            })
+            body: JSON.stringify(answers)
         });
 
-        if (!response.ok) {
-            throw new Error("Submission failed.");
-        }
+        // Ending sequence
+        setTimeout(() => setText("Very..."), 1000);
+        setTimeout(() => setText("Very..."), 2500);
+        setTimeout(() => setText("Interesting...."), 4000);
 
-        question.textContent = "Very... Very... Interesting....";
-
-    } catch (error) {
-
-        console.error(error);
-        question.textContent = "Something went wrong.";
-
+    } catch (err) {
+        console.error(err);
+        setText("Something went wrong.");
     }
-
 }
-
-input.addEventListener("keydown", function (event) {
-
-    if (event.key !== "Enter") return;
-
-    const value = input.value.trim();
-
-    if (value.length === 0) return;
-
-    if (stage === 0) {
-
-        answers.name = value;
-
-    } else {
-
-        answers.power = value;
-
-    }
-
-    stage++;
-
-    showQuestion();
-
-});
