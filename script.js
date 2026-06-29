@@ -8,7 +8,8 @@ const answers = {
 
 let stage = 0;
 
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyb4jdYj4erfDV_s45nOongeu6XndwK-lUqZisHp93_xHxJfHJejzegMmxIyn2nJUy3/exec";
+// Sends to your Vercel API
+const API_URL = "/api/submit";
 
 showQuestion();
 
@@ -20,7 +21,7 @@ function showQuestion() {
 
     } else if (stage === 1) {
 
-        question.textContent = "What power do you desire?";
+        question.textContent = "What Power Do You Desire?";
         input.value = "";
 
     } else {
@@ -38,15 +39,20 @@ async function submitAnswers() {
 
     try {
 
-        const form = new URLSearchParams();
-        form.append("name", answers.name);
-        form.append("power", answers.power);
-
-        await fetch(WEB_APP_URL, {
+        const response = await fetch(API_URL, {
             method: "POST",
-            body: form,
-            mode: "no-cors"
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: answers.name,
+                power: answers.power
+            })
         });
+
+        if (!response.ok) {
+            throw new Error("Submission failed.");
+        }
 
         question.textContent = "Very... Very... Interesting....";
 
@@ -71,7 +77,7 @@ input.addEventListener("keydown", function (event) {
 
         answers.name = value;
 
-    } else if (stage === 1) {
+    } else {
 
         answers.power = value;
 
